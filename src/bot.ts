@@ -9,7 +9,7 @@ const users: string[] = process.env.ALLOWED_USERS?.split(',') || [];
 const checkUserAccess = (userId: string | undefined): boolean => {
   if (!userId) return false;
   return users.includes(userId);
-}
+};
 
 let isActive: boolean = false;
 
@@ -28,7 +28,10 @@ bot.onText(/\/start/, (msg) => {
     bot.sendMessage(chatId, 'The bot is already running and active.');
   } else {
     isActive = true;
-    bot.sendMessage(chatId, 'The bot has been successfully running and is ready to work.');
+    bot.sendMessage(
+      chatId,
+      'The bot has been successfully running and is ready to work.'
+    );
   }
 });
 
@@ -43,7 +46,10 @@ bot.onText(/\/stop/, (msg) => {
 
   if (isActive) {
     isActive = false;
-    bot.sendMessage(chatId, 'The bot has been successfully stopped. The interaction has been terminated.');
+    bot.sendMessage(
+      chatId,
+      'The bot has been successfully stopped. The interaction has been terminated.'
+    );
   } else {
     bot.sendMessage(chatId, 'The bot is already stopped.');
   }
