@@ -9,13 +9,14 @@ const apiKey = process.env.BINANCE_API_KEY;
 
 export async function get24hPriceChange(symbol: string): Promise<string> {
   try {
+    const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
     // Fetch 24hr stats from Binance
     const response = await axios.get(`${BASE_URL}/api/v3/ticker/24hr`, {
       headers: {
         'X-MBX-APIKEY': apiKey,
       },
       params: {
-        symbol: symbol.toUpperCase(),
+        symbol: symbolWithUsdt,
       },
     });
 
