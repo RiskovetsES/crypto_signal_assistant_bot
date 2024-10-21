@@ -5,4 +5,6 @@ export const MESSAGES = {
   BOT_STOPPED:
     'The bot has been successfully stopped. The interaction has been terminated.',
   BOT_ALREADY_STOPPED: 'The bot is already stopped.',
+  INVALID_SYMBOL:
+    'Please specify a valid cryptocurrency symbol. Example command: /24h BTCUSDT',
 };
