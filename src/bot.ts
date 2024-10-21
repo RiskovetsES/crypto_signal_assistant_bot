@@ -1,6 +1,6 @@
 import TelegramBot from 'node-telegram-bot-api';
 import dotenv from 'dotenv';
-import { messageHandler } from './handlers/messageHandler';
+// import { messageHandler } from './handlers/messageHandler';
 import { startHandler } from './handlers/startHandler';
 import { stopHandler } from './handlers/stopHandler';
 import { priceChangeHandler } from './handlers/priceChangeHandler';
@@ -16,4 +16,4 @@ bot.onText(/\/stop/, (msg) => stopHandler(bot, msg));
 bot.onText(/\/24h (\w+)/, (msg, match) => priceChangeHandler(bot, msg, match));
 
 // Main message handler
-bot.on('message', (msg) => messageHandler(bot, msg));
+// bot.on('message', (msg) => messageHandler(bot, msg));
