@@ -19,7 +19,7 @@ export type Candlestick = [
   number, // numberOfTrades
   string, // takerBuyBaseAssetVolume
   string, // takerBuyQuoteAssetVolume
-  string  // ignore
+  string, // ignore
 ];
 
 export async function get24hPriceChange(symbol: string): Promise<string> {
@@ -44,7 +44,11 @@ export async function get24hPriceChange(symbol: string): Promise<string> {
   }
 }
 
-export async function getCandlestickData(symbol: string, period: number, interval: string = '4h'): Promise<number[]> {
+export async function getCandlestickData(
+  symbol: string,
+  period: number,
+  interval: string = '4h'
+): Promise<number[]> {
   try {
     const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
     const response = await axios.get(`${BASE_URL}/api/v3/klines`, {
@@ -61,11 +65,9 @@ export async function getCandlestickData(symbol: string, period: number, interva
     const candlesticks: Candlestick[] = response.data;
 
     // Extract closing prices
-    return candlesticks.map(candle => parseFloat(candle[4]));
-
+    return candlesticks.map((candle) => parseFloat(candle[4]));
   } catch (err) {
     console.error(err);
     throw new Error('Error fetching candlestick data');
   }
 }
-
