@@ -13,13 +13,9 @@ export async function smaHandler(bot: TelegramBot, msg: TelegramBot.Message, mat
     return;
   }
 
-  if (!match?.[2]) {
-    bot.sendMessage(chatId, MESSAGES.INVALID_SMA_COMMAND);
-    return;
-  }
-
   const symbol = match?.[1];
-  const period = parseInt(match?.[2], 10);
+  const period = parseInt((match?.[2] ?? '7'), 10);
+  const interval = match?.[3] ?? '4h';
 
   if (!symbol || isNaN(period) || period <= 0) {
     bot.sendMessage(chatId, MESSAGES.INVALID_SMA_COMMAND);
@@ -27,7 +23,7 @@ export async function smaHandler(bot: TelegramBot, msg: TelegramBot.Message, mat
   }
 
   try {
-    const prices = await getCandlestickData(symbol, period);
+    const prices = await getCandlestickData(symbol, period, interval);
     if (prices.length < period) {
       bot.sendMessage(chatId, MESSAGES.NOT_ENOUGH_DATA.replace('{symbol}', symbol));
       return;
@@ -39,7 +35,8 @@ export async function smaHandler(bot: TelegramBot, msg: TelegramBot.Message, mat
       .replace('{period}', period.toString())
       .replace('{symbol}', symbol.toUpperCase())
       .replace('{smaValue}', smaValue.toString()));
-  } catch {
+  } catch (err) {
+    console.error(err);
     bot.sendMessage(chatId, MESSAGES.ERROR_FETCHING_DATA.replace('{symbol}', symbol.toUpperCase()));
   }
 }

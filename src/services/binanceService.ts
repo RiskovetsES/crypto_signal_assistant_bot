@@ -7,20 +7,20 @@ const BASE_URL = 'https://api.binance.com';
 
 const apiKey = process.env.BINANCE_API_KEY;
 
-export type Candlestick = {
-  openTime: number;
-  open: string;
-  high: string;
-  low: string;
-  close: string;
-  volume: string;
-  closeTime: number;
-  quoteAssetVolume: string;
-  numberOfTrades: number;
-  takerBuyBaseAssetVolume: string;
-  takerBuyQuoteAssetVolume: string;
-  ignore: string;
-};
+export type Candlestick = [
+  number, // openTime
+  string, // open
+  string, // high
+  string, // low
+  string, // close
+  string, // volume
+  number, // closeTime
+  string, // quoteAssetVolume
+  number, // numberOfTrades
+  string, // takerBuyBaseAssetVolume
+  string, // takerBuyQuoteAssetVolume
+  string  // ignore
+];
 
 export async function get24hPriceChange(symbol: string): Promise<string> {
   try {
@@ -38,7 +38,8 @@ export async function get24hPriceChange(symbol: string): Promise<string> {
     const { priceChangePercent, highPrice, lowPrice } = response.data;
 
     return `In the last 24 hours for ${symbol.toUpperCase()}: highest price ${highPrice}, lowest price ${lowPrice}, change ${priceChangePercent}%`;
-  } catch {
+  } catch (err) {
+    console.error(err);
     return `Error fetching data for ${symbol.toUpperCase()}. Please check the symbol and try again.`;
   }
 }
@@ -47,6 +48,9 @@ export async function getCandlestickData(symbol: string, period: number, interva
   try {
     const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
     const response = await axios.get(`${BASE_URL}/api/v3/klines`, {
+      headers: {
+        'X-MBX-APIKEY': apiKey,
+      },
       params: {
         symbol: symbolWithUsdt,
         interval,
@@ -57,8 +61,10 @@ export async function getCandlestickData(symbol: string, period: number, interva
     const candlesticks: Candlestick[] = response.data;
 
     // Extract closing prices
-    return candlesticks.map((candle) => parseFloat(candle.close));
-  } catch {
+    return candlesticks.map(candle => parseFloat(candle[4]));
+
+  } catch (err) {
+    console.error(err);
     throw new Error('Error fetching candlestick data');
   }
 }
