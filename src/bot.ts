@@ -4,6 +4,7 @@ import { startHandler } from './handlers/startHandler';
 import { stopHandler } from './handlers/stopHandler';
 import { priceChangeHandler } from './handlers/priceChangeHandler';
 import { smaHandler } from './handlers/smaHandler';
+import { supportResistanceHandler } from './handlers/supportResistanceHandler';
 
 dotenv.config();
 
@@ -18,4 +19,7 @@ bot.onText(/\/price (\w+)/, (msg, match) =>
 );
 bot.onText(/\/sma (\w+) (\d+) ?(\w+)?/, (msg, match) =>
   smaHandler(bot, msg, match)
+);
+bot.onText(/\/supres (\w+)/, (msg, match) =>
+  supportResistanceHandler(bot, msg, match)
 );

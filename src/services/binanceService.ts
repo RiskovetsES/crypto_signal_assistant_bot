@@ -71,3 +71,28 @@ export async function getCandlestickData(
     throw new Error('Error fetching candlestick data');
   }
 }
+
+export async function getOrderBook(
+  symbol: string
+): Promise<{ bids: [string, string][]; asks: [string, string][] }> {
+  try {
+    const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
+    const response = await axios.get(`${BASE_URL}/api/v3/depth`, {
+      headers: {
+        'X-MBX-APIKEY': apiKey,
+      },
+      params: {
+        symbol: symbolWithUsdt,
+        limit: 5000,
+      },
+    });
+
+    return {
+      bids: response.data.bids,
+      asks: response.data.asks,
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    throw new Error(`Error fetching order book data: ${err.message}`);
+  }
+}
