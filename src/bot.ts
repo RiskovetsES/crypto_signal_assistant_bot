@@ -11,6 +11,15 @@ dotenv.config();
 const token: string = process.env.TELEGRAM_BOT_TOKEN as string;
 const bot = new TelegramBot(token, { polling: true });
 
+// Command descriptions
+/*
+start - Start the bot
+stop - Stop the bot
+price - Get 24-hour price change for the specified symbol (e.g., /price btc or /price eth)
+sma - Get the SMA for a specific period (e.g., /sma BTC 14 1d)
+supres - Get the support and resistance levels for the specified symbol (e.g., /supres BTC)
+*/
+
 // Register command handlers
 bot.onText(/\/start/, (msg) => startHandler(bot, msg));
 bot.onText(/\/stop/, (msg) => stopHandler(bot, msg));
