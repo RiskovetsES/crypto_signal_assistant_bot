@@ -22,16 +22,31 @@ export type Candlestick = [
   string, // ignore
 ];
 
+export async function getCurrentPrice(symbol: string): Promise<number> {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/v3/ticker/price`, {
+      params: { symbol: symbol.toUpperCase() },
+      headers: {
+        'X-MBX-APIKEY': apiKey,
+      },
+    });
+    return parseFloat(response.data.price);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err:any) {
+    console.error(`Error fetching current price for ${symbol}:`, err.message);
+    throw new Error('Failed to fetch current price');
+  }
+}
+
 export async function get24hPriceChange(symbol: string): Promise<string> {
   try {
-    const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
     // Fetch 24hr stats from Binance
     const response = await axios.get(`${BASE_URL}/api/v3/ticker/24hr`, {
       headers: {
         'X-MBX-APIKEY': apiKey,
       },
       params: {
-        symbol: symbolWithUsdt,
+        symbol: symbol,
       },
     });
 
@@ -50,13 +65,12 @@ export async function getCandlestickData(
   interval: string = '4h'
 ): Promise<number[]> {
   try {
-    const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
     const response = await axios.get(`${BASE_URL}/api/v3/klines`, {
       headers: {
         'X-MBX-APIKEY': apiKey,
       },
       params: {
-        symbol: symbolWithUsdt,
+        symbol: symbol,
         interval,
         limit: period + 1,
       },
@@ -76,13 +90,12 @@ export async function getOrderBook(
   symbol: string
 ): Promise<{ bids: [string, string][]; asks: [string, string][] }> {
   try {
-    const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
     const response = await axios.get(`${BASE_URL}/api/v3/depth`, {
       headers: {
         'X-MBX-APIKEY': apiKey,
       },
       params: {
-        symbol: symbolWithUsdt,
+        symbol: symbol,
         limit: 5000,
       },
     });

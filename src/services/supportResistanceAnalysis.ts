@@ -39,13 +39,11 @@ export function findSupportAndResistanceLevels(
   const significantLevels: { price: number; volume: number }[] = [];
   const insignificantLevels: { price: number; volume: number }[] = [];
 
-  if (orderLevels.length === 0)
-    return { significantLevels, insignificantLevels };
+  if (orderLevels.length === 0) return { significantLevels, insignificantLevels };
 
-  const averageVolume =
-    orderLevels.reduce((sum, order) => sum + order.volume, 0) /
-    orderLevels.length;
+  const averageVolume = orderLevels.reduce((sum, order) => sum + order.volume, 0) / orderLevels.length;
   const volumeThreshold = averageVolume * 2; // Set threshold as twice the average volume
+
   for (let i = 0; i < orderLevels.length; i++) {
     const level = orderLevels[i];
     // Significant level if volume is more than the dynamic threshold
@@ -56,17 +54,18 @@ export function findSupportAndResistanceLevels(
     }
   }
 
+  // Sort insignificant levels by volume in descending order to get the top 3
+  insignificantLevels.sort((a, b) => b.volume - a.volume);
+
   // Filter out potentially spoofed walls for significant levels
   return {
-    significantLevels: filterSpoofingLevels(
-      orderLevels,
-      significantLevels
-    ).slice(0, 5), // Return top 5 significant levels
-    insignificantLevels,
+    significantLevels: filterSpoofingLevels(orderLevels, significantLevels).slice(0, 3), // Return top 3 significant levels
+    insignificantLevels: insignificantLevels.slice(0, 3), // Return top 3 insignificant levels
   };
 }
 
 // This function filters out levels that are likely to be spoofed orders (fake walls).
+// TO:DO: Does not work properly, need to fix the logic
 function filterSpoofingLevels(
   orderBookEntries: { price: number; volume: number }[],
   levels: { price: number; volume: number }[]

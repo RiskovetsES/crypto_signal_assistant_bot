@@ -22,7 +22,7 @@ export async function priceChangeHandler(
     bot.sendMessage(chatId, MESSAGES.INVALID_SYMBOL);
     return;
   }
-
-  const responseMessage = await get24hPriceChange(symbol);
+  const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
+  const responseMessage = await get24hPriceChange(symbolWithUsdt);
   bot.sendMessage(chatId, responseMessage);
 }

@@ -29,7 +29,8 @@ export async function supportResistanceHandler(
   }
 
   try {
-    const orderBook = await getOrderBook(symbol);
+    const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
+    const orderBook = await getOrderBook(symbolWithUsdt);
     const groupedBids = groupOrderLevels(orderBook.bids, 0.5);
     const groupedAsks = groupOrderLevels(orderBook.asks, 0.5);
     const {

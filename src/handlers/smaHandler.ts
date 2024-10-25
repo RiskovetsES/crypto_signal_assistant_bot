@@ -27,7 +27,8 @@ export async function smaHandler(
   }
 
   try {
-    const prices = await getCandlestickData(symbol, period, interval);
+    const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
+    const prices = await getCandlestickData(symbolWithUsdt, period, interval);
     if (prices.length < period) {
       bot.sendMessage(
         chatId,
