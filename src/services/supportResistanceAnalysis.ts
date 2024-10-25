@@ -44,8 +44,8 @@ export function findSupportAndResistanceLevels(
   const averageVolume = orderLevels.reduce((sum, order) => sum + order.volume, 0) / orderLevels.length;
   const volumeThreshold = averageVolume * 2; // Set threshold as twice the average volume
 
-  for (let i = 0; i < orderLevels.length; i++) {
-    const level = orderLevels[i];
+  for (const element of orderLevels) {
+    const level = element
     // Significant level if volume is more than the dynamic threshold
     if (level.volume > volumeThreshold) {
       significantLevels.push(level);
