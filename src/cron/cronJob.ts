@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import dotenv from 'dotenv';
-import { getOrderBook, getCurrentPrice } from '../services/binanceService';
+import { getFuturesOrderBook, getCurrentFuturesPrice } from '../services/binanceService';
 import { groupOrderLevels, findSupportAndResistanceLevels } from '../services/supportResistanceAnalysis';
 import { savePriceHistory, saveOrderBookLevel } from '../services/databaseService';
 
@@ -9,18 +9,18 @@ dotenv.config();
 export function scheduleSupportResistanceDataCollection() {
   const symbols = process.env.SYMBOLS?.split(',') || ['BTC'];
 
-  cron.schedule('*/15 * * * *', async () => {
-    console.log('Running support and resistance data collection every 15 minutes');
+  cron.schedule('*/1 * * * *', async () => {
+    console.log('Running support and resistance data collection every minute');
     for (const symbol of symbols) {
       try {
         const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
 
         // Get the current price and save it to price_history
-        const currentPrice = await getCurrentPrice(symbolWithUsdt);
+        const currentPrice = await getCurrentFuturesPrice(symbolWithUsdt);
         savePriceHistory(symbol, currentPrice);
 
         // Get order book data and calculate support and resistance levels
-        const orderBook = await getOrderBook(symbolWithUsdt);
+        const orderBook = await getFuturesOrderBook(symbolWithUsdt);
         const groupedBids = groupOrderLevels(orderBook.bids, 0.3);
         const groupedAsks = groupOrderLevels(orderBook.asks, 0.3);
         const { significantLevels: supportLevels, insignificantLevels: insignificantSupportLevels } = findSupportAndResistanceLevels(groupedBids);

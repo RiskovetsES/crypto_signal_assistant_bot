@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const BASE_URL = 'https://api.binance.com';
+const BASE_URL = 'https://fapi.binance.com';
 
 const apiKey = process.env.BINANCE_API_KEY;
 
@@ -22,9 +22,9 @@ export type Candlestick = [
   string, // ignore
 ];
 
-export async function getCurrentPrice(symbol: string): Promise<number> {
+export async function getCurrentFuturesPrice(symbol: string): Promise<number> {
   try {
-    const response = await axios.get(`${BASE_URL}/api/v3/ticker/price`, {
+    const response = await axios.get(`${BASE_URL}/fapi/v1/ticker/price`, {
       params: { symbol: symbol.toUpperCase() },
       headers: {
         'X-MBX-APIKEY': apiKey,
@@ -32,16 +32,16 @@ export async function getCurrentPrice(symbol: string): Promise<number> {
     });
     return parseFloat(response.data.price);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err:any) {
-    console.error(`Error fetching current price for ${symbol}:`, err.message);
-    throw new Error('Failed to fetch current price');
+  } catch (err: any) {
+    console.error(`Error fetching futures price for ${symbol}:`, err.message);
+    throw new Error('Failed to fetch futures price');
   }
 }
 
-export async function get24hPriceChange(symbol: string): Promise<string> {
+export async function getFutures24hPriceChange(symbol: string): Promise<string> {
   try {
-    // Fetch 24hr stats from Binance
-    const response = await axios.get(`${BASE_URL}/api/v3/ticker/24hr`, {
+    // Fetch 24hr stats from Binance Futures
+    const response = await axios.get(`${BASE_URL}/fapi/v1/ticker/24hr`, {
       headers: {
         'X-MBX-APIKEY': apiKey,
       },
@@ -59,13 +59,13 @@ export async function get24hPriceChange(symbol: string): Promise<string> {
   }
 }
 
-export async function getCandlestickData(
+export async function getFuturesCandlestickData(
   symbol: string,
   period: number,
   interval: string = '4h'
 ): Promise<number[]> {
   try {
-    const response = await axios.get(`${BASE_URL}/api/v3/klines`, {
+    const response = await axios.get(`${BASE_URL}/fapi/v1/klines`, {
       headers: {
         'X-MBX-APIKEY': apiKey,
       },
@@ -76,7 +76,7 @@ export async function getCandlestickData(
       },
     });
 
-    const candlesticks: Candlestick[] = response.data;
+    const candlesticks: [number, string, string, string, string, string, number, string, number, string, string, string][] = response.data;
 
     // Extract closing prices
     return candlesticks.map((candle) => parseFloat(candle[4]));
@@ -86,26 +86,18 @@ export async function getCandlestickData(
   }
 }
 
-export async function getOrderBook(
-  symbol: string
-): Promise<{ bids: [string, string][]; asks: [string, string][] }> {
+export async function getFuturesOrderBook(symbol: string): Promise<{ bids: [string, string][], asks: [string, string][] }> {
   try {
-    const response = await axios.get(`${BASE_URL}/api/v3/depth`, {
+    const response = await axios.get(`${BASE_URL}/fapi/v1/depth`, {
+      params: { symbol: symbol.toUpperCase(), limit: 1000 },
       headers: {
         'X-MBX-APIKEY': apiKey,
       },
-      params: {
-        symbol: symbol,
-        limit: 5000,
-      },
     });
-
-    return {
-      bids: response.data.bids,
-      asks: response.data.asks,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return response.data;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    throw new Error(`Error fetching order book data: ${err.message}`);
+    console.error(`Error fetching futures order book for ${symbol}:`, err.message);
+    throw new Error('Failed to fetch futures order book');
   }
 }

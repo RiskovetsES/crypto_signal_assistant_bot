@@ -1,6 +1,6 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { checkUserAccess } from '../middlewares/authMiddleware';
-import { get24hPriceChange } from '../services/binanceService';
+import { getFutures24hPriceChange } from '../services/binanceService';
 import { MESSAGES } from '../utils/messages';
 
 export async function priceChangeHandler(
@@ -23,6 +23,6 @@ export async function priceChangeHandler(
     return;
   }
   const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
-  const responseMessage = await get24hPriceChange(symbolWithUsdt);
+  const responseMessage = await getFutures24hPriceChange(symbolWithUsdt);
   bot.sendMessage(chatId, responseMessage);
 }

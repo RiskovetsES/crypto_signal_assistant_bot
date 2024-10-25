@@ -1,7 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import talib from 'ta-lib';
 import { checkUserAccess } from '../middlewares/authMiddleware';
-import { getCandlestickData } from '../services/binanceService';
+import { getFuturesCandlestickData } from '../services/binanceService';
 import { MESSAGES } from '../utils/messages';
 
 export async function smaHandler(
@@ -28,7 +28,7 @@ export async function smaHandler(
 
   try {
     const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
-    const prices = await getCandlestickData(symbolWithUsdt, period, interval);
+    const prices = await getFuturesCandlestickData(symbolWithUsdt, period, interval);
     if (prices.length < period) {
       bot.sendMessage(
         chatId,
