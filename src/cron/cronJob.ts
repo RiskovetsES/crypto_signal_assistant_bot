@@ -9,7 +9,7 @@ dotenv.config();
 export function scheduleSupportResistanceDataCollection() {
   const symbols = process.env.SYMBOLS?.split(',') || ['BTC'];
 
-  cron.schedule('*/1 * * * *', async () => {
+  cron.schedule('*/15 * * * *', async () => {
     console.log('Running support and resistance data collection every 15 minutes');
     for (const symbol of symbols) {
       try {
