@@ -1,6 +1,6 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { checkUserAccess } from '../middlewares/authMiddleware';
-import { getOrderBook } from '../services/binanceService';
+import { getFuturesOrderBook } from '../services/binanceService';
 import { formatSupportResistanceMessage } from '../utils/messageFormatter';
 import { MESSAGES } from '../utils/messages';
 import {
@@ -30,7 +30,7 @@ export async function supportResistanceHandler(
 
   try {
     const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
-    const orderBook = await getOrderBook(symbolWithUsdt);
+    const orderBook = await getFuturesOrderBook(symbolWithUsdt);
     const groupedBids = groupOrderLevels(orderBook.bids, 0.5);
     const groupedAsks = groupOrderLevels(orderBook.asks, 0.5);
     const {

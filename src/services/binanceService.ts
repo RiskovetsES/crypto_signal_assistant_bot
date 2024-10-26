@@ -31,14 +31,16 @@ export async function getCurrentFuturesPrice(symbol: string): Promise<number> {
       },
     });
     return parseFloat(response.data.price);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error(`Error fetching futures price for ${symbol}:`, err.message);
     throw new Error('Failed to fetch futures price');
   }
 }
 
-export async function getFutures24hPriceChange(symbol: string): Promise<string> {
+export async function getFutures24hPriceChange(
+  symbol: string
+): Promise<string> {
   try {
     // Fetch 24hr stats from Binance Futures
     const response = await axios.get(`${BASE_URL}/fapi/v1/ticker/24hr`, {
@@ -76,7 +78,20 @@ export async function getFuturesCandlestickData(
       },
     });
 
-    const candlesticks: [number, string, string, string, string, string, number, string, number, string, string, string][] = response.data;
+    const candlesticks: [
+      number,
+      string,
+      string,
+      string,
+      string,
+      string,
+      number,
+      string,
+      number,
+      string,
+      string,
+      string,
+    ][] = response.data;
 
     // Extract closing prices
     return candlesticks.map((candle) => parseFloat(candle[4]));
@@ -86,7 +101,9 @@ export async function getFuturesCandlestickData(
   }
 }
 
-export async function getFuturesOrderBook(symbol: string): Promise<{ bids: [string, string][], asks: [string, string][] }> {
+export async function getFuturesOrderBook(
+  symbol: string
+): Promise<{ bids: [string, string][]; asks: [string, string][] }> {
   try {
     const response = await axios.get(`${BASE_URL}/fapi/v1/depth`, {
       params: { symbol: symbol.toUpperCase(), limit: 1000 },
@@ -95,9 +112,12 @@ export async function getFuturesOrderBook(symbol: string): Promise<{ bids: [stri
       },
     });
     return response.data;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.error(`Error fetching futures order book for ${symbol}:`, err.message);
+    console.error(
+      `Error fetching futures order book for ${symbol}:`,
+      err.message
+    );
     throw new Error('Failed to fetch futures order book');
   }
 }

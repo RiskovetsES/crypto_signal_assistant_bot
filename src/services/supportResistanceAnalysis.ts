@@ -39,13 +39,16 @@ export function findSupportAndResistanceLevels(
   const significantLevels: { price: number; volume: number }[] = [];
   const insignificantLevels: { price: number; volume: number }[] = [];
 
-  if (orderLevels.length === 0) return { significantLevels, insignificantLevels };
+  if (orderLevels.length === 0)
+    return { significantLevels, insignificantLevels };
 
-  const averageVolume = orderLevels.reduce((sum, order) => sum + order.volume, 0) / orderLevels.length;
+  const averageVolume =
+    orderLevels.reduce((sum, order) => sum + order.volume, 0) /
+    orderLevels.length;
   const volumeThreshold = averageVolume * 2; // Set threshold as twice the average volume
 
   for (const element of orderLevels) {
-    const level = element
+    const level = element;
     // Significant level if volume is more than the dynamic threshold
     if (level.volume > volumeThreshold) {
       significantLevels.push(level);
@@ -59,7 +62,10 @@ export function findSupportAndResistanceLevels(
 
   // Filter out potentially spoofed walls for significant levels
   return {
-    significantLevels: filterSpoofingLevels(orderLevels, significantLevels).slice(0, 3), // Return top 3 significant levels
+    significantLevels: filterSpoofingLevels(
+      orderLevels,
+      significantLevels
+    ).slice(0, 3), // Return top 3 significant levels
     insignificantLevels: insignificantLevels.slice(0, 3), // Return top 3 insignificant levels
   };
 }

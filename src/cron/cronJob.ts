@@ -1,8 +1,17 @@
 import cron from 'node-cron';
 import dotenv from 'dotenv';
-import { getFuturesOrderBook, getCurrentFuturesPrice } from '../services/binanceService';
-import { groupOrderLevels, findSupportAndResistanceLevels } from '../services/supportResistanceAnalysis';
-import { savePriceHistory, saveOrderBookLevel } from '../services/databaseService';
+import {
+  getFuturesOrderBook,
+  getCurrentFuturesPrice,
+} from '../services/binanceService';
+import {
+  groupOrderLevels,
+  findSupportAndResistanceLevels,
+} from '../services/supportResistanceAnalysis';
+import {
+  savePriceHistory,
+  saveOrderBookLevel,
+} from '../services/databaseService';
 
 dotenv.config();
 
@@ -10,7 +19,9 @@ export function scheduleSupportResistanceDataCollection() {
   const symbols = process.env.SYMBOLS?.split(',') || ['BTC'];
 
   cron.schedule('*/15 * * * *', async () => {
-    console.log('Running support and resistance data collection every 15 minutes');
+    console.log(
+      'Running support and resistance data collection every 15 minutes'
+    );
     for (const symbol of symbols) {
       try {
         const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
@@ -23,29 +34,59 @@ export function scheduleSupportResistanceDataCollection() {
         const orderBook = await getFuturesOrderBook(symbolWithUsdt);
         const groupedBids = groupOrderLevels(orderBook.bids, 0.3);
         const groupedAsks = groupOrderLevels(orderBook.asks, 0.3);
-        const { significantLevels: supportLevels, insignificantLevels: insignificantSupportLevels } = findSupportAndResistanceLevels(groupedBids);
-        const { significantLevels: resistanceLevels, insignificantLevels: insignificantResistanceLevels } = findSupportAndResistanceLevels(groupedAsks);
+        const {
+          significantLevels: supportLevels,
+          insignificantLevels: insignificantSupportLevels,
+        } = findSupportAndResistanceLevels(groupedBids);
+        const {
+          significantLevels: resistanceLevels,
+          insignificantLevels: insignificantResistanceLevels,
+        } = findSupportAndResistanceLevels(groupedAsks);
 
         // Save support levels to the database
         supportLevels.forEach((level) => {
-          saveOrderBookLevel(symbol, 'support', level.price, level.volume, 'significant');
+          saveOrderBookLevel(
+            symbol,
+            'support',
+            level.price,
+            level.volume,
+            'significant'
+          );
         });
 
         insignificantSupportLevels.forEach((level) => {
-          saveOrderBookLevel(symbol, 'support', level.price, level.volume, 'insignificant');
+          saveOrderBookLevel(
+            symbol,
+            'support',
+            level.price,
+            level.volume,
+            'insignificant'
+          );
         });
 
         // Save resistance levels to the database
         resistanceLevels.forEach((level) => {
-          saveOrderBookLevel(symbol, 'resistance', level.price, level.volume, 'significant');
+          saveOrderBookLevel(
+            symbol,
+            'resistance',
+            level.price,
+            level.volume,
+            'significant'
+          );
         });
 
         insignificantResistanceLevels.forEach((level) => {
-          saveOrderBookLevel(symbol, 'resistance', level.price, level.volume, 'insignificant');
+          saveOrderBookLevel(
+            symbol,
+            'resistance',
+            level.price,
+            level.volume,
+            'insignificant'
+          );
         });
 
         console.log(`Data collected for ${symbol}`);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(`Failed to collect data for ${symbol}:`, err.message);
       }

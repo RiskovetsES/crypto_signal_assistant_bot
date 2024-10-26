@@ -8,7 +8,10 @@ export function savePriceHistory(symbol: string, price: number) {
     [symbol, price],
     function (err) {
       if (err) {
-        console.error(`Failed to insert current price for ${symbol}:`, err.message);
+        console.error(
+          `Failed to insert current price for ${symbol}:`,
+          err.message
+        );
       } else {
         console.log(`Inserted current price for ${symbol}: ${price}`);
       }
@@ -16,13 +19,22 @@ export function savePriceHistory(symbol: string, price: number) {
   );
 }
 
-export function saveOrderBookLevel(symbol: string, levelType: string, price: number, volume: number, significance: string) {
+export function saveOrderBookLevel(
+  symbol: string,
+  levelType: string,
+  price: number,
+  volume: number,
+  significance: string
+) {
   db.run(
     `INSERT INTO orderbook (symbol, levelType, price, volume, significance) VALUES (?, ?, ?, ?, ?)`,
     [symbol, levelType, price, volume, significance],
     function (err) {
       if (err) {
-        console.error(`Failed to insert ${levelType} level for ${symbol}:`, err.message);
+        console.error(
+          `Failed to insert ${levelType} level for ${symbol}:`,
+          err.message
+        );
       }
     }
   );
