@@ -1,9 +1,9 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { checkUserAccess } from '../middlewares/authMiddleware';
-import { getFutures24hPriceChange } from '../services/binanceService';
+import { getFundingRate } from '../services/binanceService';
 import { MESSAGES } from '../utils/messages';
 
-export async function priceChangeHandler(
+export async function fundinRateHandler(
   bot: TelegramBot,
   msg: TelegramBot.Message,
   match: RegExpExecArray | null
@@ -23,8 +23,7 @@ export async function priceChangeHandler(
     return;
   }
   const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
-  const { priceChangePercent, highPrice, lowPrice } =
-    await getFutures24hPriceChange(symbolWithUsdt);
-  const responseMessage = `In the last 24 hours for ${symbol.toUpperCase()}: highest price ${highPrice}, lowest price ${lowPrice}, change ${priceChangePercent}%`;
+  const fundingRate = await getFundingRate(symbolWithUsdt);
+  const responseMessage = `Funding rate for ${symbol.toUpperCase()}: ${fundingRate}`;
   bot.sendMessage(chatId, responseMessage);
 }

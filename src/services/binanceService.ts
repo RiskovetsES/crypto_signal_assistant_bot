@@ -38,9 +38,11 @@ export async function getCurrentFuturesPrice(symbol: string): Promise<number> {
   }
 }
 
-export async function getFutures24hPriceChange(
-  symbol: string
-): Promise<string> {
+export async function getFutures24hPriceChange(symbol: string): Promise<{
+  priceChangePercent: string;
+  highPrice: string;
+  lowPrice: string;
+}> {
   try {
     // Fetch 24hr stats from Binance Futures
     const response = await axios.get(`${BASE_URL}/fapi/v1/ticker/24hr`, {
@@ -52,12 +54,12 @@ export async function getFutures24hPriceChange(
       },
     });
 
-    const { priceChangePercent, highPrice, lowPrice } = response.data;
-
-    return `In the last 24 hours for ${symbol.toUpperCase()}: highest price ${highPrice}, lowest price ${lowPrice}, change ${priceChangePercent}%`;
+    return response.data;
   } catch (err) {
     console.error(err);
-    return `Error fetching data for ${symbol.toUpperCase()}. Please check the symbol and try again.`;
+    throw new Error(
+      `Error fetching data for ${symbol.toUpperCase()}. Please check the symbol and try again.`
+    );
   }
 }
 
@@ -119,5 +121,21 @@ export async function getFuturesOrderBook(
       err.message
     );
     throw new Error('Failed to fetch futures order book');
+  }
+}
+
+export async function getFundingRate(symbol: string): Promise<number> {
+  try {
+    const response = await axios.get(`${BASE_URL}/fapi/v1/fundingRate`, {
+      params: { symbol: symbol.toUpperCase() },
+      headers: {
+        'X-MBX-APIKEY': apiKey,
+      },
+    });
+    return parseFloat(response.data[0].fundingRate);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    console.error(`Error fetching funding rate for ${symbol}:`, err.message);
+    throw new Error('Failed to fetch funding rate');
   }
 }
