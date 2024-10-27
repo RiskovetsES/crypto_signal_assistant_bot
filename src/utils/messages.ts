@@ -14,4 +14,6 @@ export const MESSAGES = {
   SMA_RESULT: 'The {period}-period SMA for {symbol} is {smaValue}',
   ERROR_FETCHING_DATA:
     'Error fetching data for {symbol}. Please check the symbol and try again.',
+  INVALID_INTERES_PERIOD:
+    'Please specify a valid period. Allowed periods: 5m, 15m, 30m, 1h, 2h, 4h, 6h, 12h, 1d',
 };

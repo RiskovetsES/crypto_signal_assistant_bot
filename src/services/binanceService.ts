@@ -139,3 +139,25 @@ export async function getFundingRate(symbol: string): Promise<number> {
     throw new Error('Failed to fetch funding rate');
   }
 }
+
+export async function getOpenInterest(
+  symbol: string,
+  period: string = '4h'
+): Promise<number> {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/futures/data/openInterestHist`,
+      {
+        params: { symbol: symbol.toUpperCase(), period },
+        headers: {
+          'X-MBX-APIKEY': apiKey,
+        },
+      }
+    );
+    return parseFloat(response.data[0].sumOpenInterest);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    console.error(`Error fetching open interest for ${symbol}:`, err.message);
+    throw new Error('Failed to fetch open interest');
+  }
+}
