@@ -39,7 +39,7 @@ export async function openInterestHandler(
     return;
   }
   const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
-  const openInteres = await getOpenInterest(symbolWithUsdt);
+  const openInteres = await getOpenInterest(symbolWithUsdt, period);
   const responseMessage = `Open Interest for ${symbol.toUpperCase()}: ${openInteres}`;
   bot.sendMessage(chatId, responseMessage);
 }
