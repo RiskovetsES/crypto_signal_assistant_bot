@@ -8,6 +8,7 @@ import { supportResistanceHandler } from './handlers/supportResistanceHandler';
 import { fundinRateHandler } from './handlers/fundingRateHandler';
 import { openInterestHandler } from './handlers/openInterestHandler';
 import { markPriceHandler } from './handlers/markPriceHandler';
+import { longShortRatioHandler } from './handlers/longShortRatioHandler';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ supres - Get the support and resistance levels for the specified symbol (e.g., /
 fundin - Get the funding rate for the specified symbol (e.g., /fundin BTC)
 interes - Get the open interest for the specified symbol (e.g., /interes BTC 1d)
 markprice - Get the mark price for the specified symbol (e.g., /markprice BTC)
+lsratio - Get the long/short ratio for the specified symbol (e.g., /lsratio BTC 1d)
 */
 
 // Register command handlers
@@ -47,4 +49,6 @@ bot.onText(/\/interes (\w+) ?(\w+)?/, (msg, match) =>
 bot.onText(/\/markprice (\w+)/, (msg, match) =>
   markPriceHandler(bot, msg, match)
 );
-
+bot.onText(/\/lsratio (\w+) ?(\w+)?/, (msg, match) =>
+  longShortRatioHandler(bot, msg, match)
+);

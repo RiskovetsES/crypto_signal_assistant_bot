@@ -1,9 +1,9 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { checkUserAccess } from '../middlewares/authMiddleware';
-import { getOpenInterest } from '../services/binanceService';
+import { getLongShortRatio } from '../services/binanceService';
 import { MESSAGES } from '../utils/messages';
 
-export async function openInterestHandler(
+export async function longShortRatioHandler(
   bot: TelegramBot,
   msg: TelegramBot.Message,
   match: RegExpExecArray | null
@@ -39,7 +39,7 @@ export async function openInterestHandler(
     return;
   }
   const symbolWithUsdt = `${symbol.toUpperCase()}USDT`;
-  const openInteres = await getOpenInterest(symbolWithUsdt, period);
-  const responseMessage = `Open Interest for ${symbol.toUpperCase()}: ${openInteres}`;
+  const longShortRatio = await getLongShortRatio(symbolWithUsdt, period);
+  const responseMessage = `Long/Short ratio for ${symbol.toUpperCase()}: ${longShortRatio}`;
   bot.sendMessage(chatId, responseMessage);
 }

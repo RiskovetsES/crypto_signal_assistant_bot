@@ -171,9 +171,34 @@ export async function getMarkPrice(symbol: string): Promise<number> {
       },
     });
     return parseFloat(response.data.markPrice);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error(`Error fetching mark price for ${symbol}:`, err.message);
     throw new Error('Failed to fetch mark price');
+  }
+}
+
+export async function getLongShortRatio(
+  symbol: string,
+  period: string = '4h'
+): Promise<number> {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/futures/data/globalLongShortAccountRatio`,
+      {
+        params: { symbol: symbol.toUpperCase(), period },
+        headers: {
+          'X-MBX-APIKEY': apiKey,
+        },
+      }
+    );
+    return parseFloat(response.data[0].longShortRatio);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    console.error(
+      `Error fetching long/short ratio for ${symbol}:`,
+      err.message
+    );
+    throw new Error('Failed to fetch long/short ratio');
   }
 }
