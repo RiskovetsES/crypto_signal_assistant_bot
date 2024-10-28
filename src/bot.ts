@@ -7,6 +7,7 @@ import { smaHandler } from './handlers/smaHandler';
 import { supportResistanceHandler } from './handlers/supportResistanceHandler';
 import { fundinRateHandler } from './handlers/fundingRateHandler';
 import { openInterestHandler } from './handlers/openInterestHandler';
+import { markPriceHandler } from './handlers/markPriceHandler';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ sma - Get the SMA for a specific period (e.g., /sma BTC 14 1d)
 supres - Get the support and resistance levels for the specified symbol (e.g., /supres BTC)
 fundin - Get the funding rate for the specified symbol (e.g., /fundin BTC)
 interes - Get the open interest for the specified symbol (e.g., /interes BTC 1d)
+markprice - Get the mark price for the specified symbol (e.g., /markprice BTC)
 */
 
 // Register command handlers
@@ -42,3 +44,7 @@ bot.onText(/\/fundin (\w+)/, (msg, match) =>
 bot.onText(/\/interes (\w+) ?(\w+)?/, (msg, match) =>
   openInterestHandler(bot, msg, match)
 );
+bot.onText(/\/markprice (\w+)/, (msg, match) =>
+  markPriceHandler(bot, msg, match)
+);
+
