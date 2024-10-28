@@ -9,6 +9,7 @@ import { fundinRateHandler } from './handlers/fundingRateHandler';
 import { openInterestHandler } from './handlers/openInterestHandler';
 import { markPriceHandler } from './handlers/markPriceHandler';
 import { longShortRatioHandler } from './handlers/longShortRatioHandler';
+import { liquidationOrdersHandler } from './handlers/liquidationOrdersHandler';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ fundin - Get the funding rate for the specified symbol (e.g., /fundin BTC)
 interes - Get the open interest for the specified symbol (e.g., /interes BTC 1d)
 markprice - Get the mark price for the specified symbol (e.g., /markprice BTC)
 lsratio - Get the long/short ratio for the specified symbol (e.g., /lsratio BTC 1d)
+liq - Get the liquidation orders volume for the specified symbol (e.g., /liq BTC)
 */
 
 // Register command handlers
@@ -51,4 +53,7 @@ bot.onText(/\/markprice (\w+)/, (msg, match) =>
 );
 bot.onText(/\/lsratio (\w+) ?(\w+)?/, (msg, match) =>
   longShortRatioHandler(bot, msg, match)
+);
+bot.onText(/\/liq (\w+)/, (msg, match) =>
+  liquidationOrdersHandler(bot, msg, match)
 );

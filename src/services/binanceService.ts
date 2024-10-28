@@ -22,6 +22,29 @@ export type Candlestick = [
   string, // ignore
 ];
 
+export type LiquidationOrder = {
+  orderId: number;
+  symbol: string;
+  status: string;
+  clientOrderId: string;
+  price: string;
+  avgPrice: string;
+  origQty: string;
+  executedQty: string;
+  cumQuote: string;
+  timeInForce: string;
+  type: string;
+  reduceOnly: boolean;
+  closePosition: boolean;
+  side: string;
+  positionSide: string;
+  stopPrice: string;
+  workingType: string;
+  origType: string;
+  time: number;
+  updateTime: number;
+};
+
 export async function getCurrentFuturesPrice(symbol: string): Promise<number> {
   try {
     const response = await axios.get(`${BASE_URL}/fapi/v1/ticker/price`, {
@@ -200,5 +223,34 @@ export async function getLongShortRatio(
       err.message
     );
     throw new Error('Failed to fetch long/short ratio');
+  }
+}
+
+export async function getLiquidationOrders(symbol: string): Promise<number> {
+  try {
+    const response = await axios.get(`${BASE_URL}/fapi/v1/forceOrders`, {
+      params: {
+        symbol: symbol.toUpperCase(),
+        autoCloseType: 'LIQUIDATION',
+        limit: 50,
+      },
+      headers: {
+        'X-MBX-APIKEY': apiKey,
+      },
+    });
+
+    const liquidationVolume = response.data.reduce(
+      (total: number, order: LiquidationOrder) =>
+        total + parseFloat(order.origQty),
+      0
+    );
+    return liquidationVolume;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    console.error(
+      `Error fetching liquidation orders for ${symbol}:`,
+      err.message
+    );
+    throw new Error('Failed to fetch liquidation orders');
   }
 }
