@@ -1,8 +1,8 @@
 import sqlite3 from 'sqlite3';
 
-const db = new sqlite3.Database('./data/orderbook.db');
-
 export function savePriceHistory(symbol: string, price: number) {
+  const db = new sqlite3.Database('./data/orderbook.db');
+
   db.run(
     `INSERT INTO price_history (symbol, price) VALUES (?, ?)`,
     [symbol, price],
@@ -17,6 +17,12 @@ export function savePriceHistory(symbol: string, price: number) {
       }
     }
   );
+
+  db.close((err) => {
+    if (err) {
+      console.error('Failed to close the database connection:', err.message);
+    }
+  });
 }
 
 export function saveOrderBookLevel(
@@ -26,6 +32,8 @@ export function saveOrderBookLevel(
   volume: number,
   significance: string
 ) {
+  const db = new sqlite3.Database('./data/orderbook.db');
+
   db.run(
     `INSERT INTO orderbook (symbol, levelType, price, volume, significance) VALUES (?, ?, ?, ?, ?)`,
     [symbol, levelType, price, volume, significance],
@@ -38,4 +46,37 @@ export function saveOrderBookLevel(
       }
     }
   );
+
+  db.close((err) => {
+    if (err) {
+      console.error('Failed to close the database connection:', err.message);
+    }
+  });
+}
+
+export function saveMarketIndicator(
+  symbol: string,
+  fundingRate: number,
+  openInterest: number,
+  markPrice: number
+) {
+  const db = new sqlite3.Database('./data/orderbook.db');
+
+  db.run(
+    `INSERT INTO market_indicators (symbol, fundingRate, openInterest, markPrice, timestamp) VALUES (?, ?, ?, ?, datetime('now'))`,
+    [symbol, fundingRate, openInterest, markPrice],
+    function (err) {
+      if (err) {
+        console.error('Error saving market indicators:', err.message);
+      } else {
+        console.log(`Market indicators saved for ${symbol}`);
+      }
+    }
+  );
+
+  db.close((err) => {
+    if (err) {
+      console.error('Failed to close the database connection:', err.message);
+    };
+  });
 }
