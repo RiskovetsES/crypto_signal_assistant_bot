@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import dotenv from 'dotenv';
-import { getCurrentFuturesPrice, getFundingRate, getOpenInterest, getMarkPrice, getLiquidationOrders } from '../services/binanceService';
+import { getCurrentFuturesPrice, getFundingRate, getOpenInterest, getMarkPrice } from '../services/binanceService';
 import { collectAndSaveSupportResistanceLevels } from '../services/supportResistanceAnalysis';
 import { savePriceHistory, saveMarketIndicator } from '../services/databaseService';
 
