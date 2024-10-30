@@ -1,3 +1,6 @@
+import { saveOrderBookLevel } from '../services/databaseService';
+import { getFuturesOrderBook } from './binanceService';
+
 export function groupOrderLevels(
   orders: [string, string][],
   thresholdPercentage: number
@@ -90,4 +93,31 @@ function filterSpoofingLevels(
   });
 
   return filteredLevels;
+}
+
+export async function collectAndSaveSupportResistanceLevels(symbol: string, symbolWithUsdt: string) {
+  // Get order book data and calculate support and resistance levels
+  const orderBook = await getFuturesOrderBook(symbolWithUsdt);
+  const groupedBids = groupOrderLevels(orderBook.bids, 0.1);
+  const groupedAsks = groupOrderLevels(orderBook.asks, 0.1);
+  const { significantLevels: supportLevels, insignificantLevels: insignificantSupportLevels } = findSupportAndResistanceLevels(groupedBids);
+  const { significantLevels: resistanceLevels, insignificantLevels: insignificantResistanceLevels } = findSupportAndResistanceLevels(groupedAsks);
+
+  // Save support levels to the database
+  supportLevels.forEach((level) => {
+    saveOrderBookLevel(symbol, 'support', level.price, level.volume, 'significant');
+  });
+
+  insignificantSupportLevels.forEach((level) => {
+    saveOrderBookLevel(symbol, 'support', level.price, level.volume, 'insignificant');
+  });
+
+  // Save resistance levels to the database
+  resistanceLevels.forEach((level) => {
+    saveOrderBookLevel(symbol, 'resistance', level.price, level.volume, 'significant');
+  });
+
+  insignificantResistanceLevels.forEach((level) => {
+    saveOrderBookLevel(symbol, 'resistance', level.price, level.volume, 'insignificant');
+  });
 }
